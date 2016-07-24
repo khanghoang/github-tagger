@@ -1,0 +1,14 @@
+.starring-container {
+  position: relative;
+}
+
+.starring-container .dropdown-menu{
+  top: 35px !important;
+  display: none;
+  width: 300px;
+  padding: 15px !important;
+}
+
+.starring-container.open .dropdown-menu{
+  display: block;
+}

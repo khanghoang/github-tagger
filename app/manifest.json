@@ -16,8 +16,7 @@
   },
   "permissions": [
     "tabs",
-    "http://*/*",
-    "https://*/*",
+    "https://github.com/*",
     "background",
     "debugger",
     "webRequest",
@@ -30,13 +29,15 @@
   "content_scripts": [
     {
       "matches": [
-        "http://*/*",
-        "https://*/*"
+        "https://github.com/*"
       ],
       "js": [
         "scripts/contentscript.js",
         "bower_components/fetch/fetch.js",
         "bower_components/jquery/dist/jquery.min.js"
+      ],
+      "css": [
+        "styles/github.css"
       ],
       "run_at": "document_start",
       "all_frames": false
