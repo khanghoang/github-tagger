@@ -1,12 +1,3 @@
 {
-  “extends”: “airbnb”,
-  "env": {
-    "es6": true
-  },
-  "parserOptions": {
-    "sourceType": "module"
-  },
-  "plugins": [
-    "react"
-  ]
+  "extends": "airbnb"
 }

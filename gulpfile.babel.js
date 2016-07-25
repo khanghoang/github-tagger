@@ -26,26 +26,26 @@ gulp.task('extras', () => {
   }).pipe(gulp.dest('dist'));
 });
 
-// function lint(files, options) {
-//   return () => {
-//     return gulp.src(files)
-//       .pipe($.eslint(options))
-//       .pipe($.eslint.format());
-//   };
-// }
-//
-// gulp.task('lint', lint('app/scripts.babel#<{(||)}>#*.js', {
-//   extends: 'airbnb',
-//   env: {
-//     es6: true
-//   },
-//   parserOptions: {
-//     sourceType: 'module'
-//   },
-//   plugins: [
-//     'react'
-//   ]
-// }));
+function lint(files, options) {
+  return () => {
+    return gulp.src(files)
+      .pipe($.eslint(options))
+      .pipe($.eslint.format());
+  };
+}
+
+gulp.task('lint', lint('app/scripts.babel/**/*.js', {
+  extends: 'airbnb',
+  env: {
+    es6: true
+  },
+  parserOptions: {
+    sourceType: 'module'
+  },
+  plugins: [
+    'react'
+  ]
+}));
 
 gulp.task('webpack', cb => {
   webpack({
@@ -172,8 +172,7 @@ gulp.task('webpack-dev', cb => {
 
 gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
 
-// gulp.task('watch', ['lint', 'webpack', 'webpack-dev', 'html'], () => {
-gulp.task('watch', ['webpack', 'webpack-dev', 'html'], () => {
+gulp.task('watch', ['lint', 'webpack', 'webpack-dev', 'html'], () => {
   $.livereload.listen();
 
   gulp.watch([
@@ -184,8 +183,7 @@ gulp.task('watch', ['webpack', 'webpack-dev', 'html'], () => {
     'app/_locales/**/*.json'
   ]).on('change', $.livereload.reload);
 
-  // gulp.watch('app/scripts.babel#<{(||)}>#*.js', ['lint', 'webpack', 'webpack-dev']);
-  gulp.watch('app/scripts.babel/**/*.js', ['webpack', 'webpack-dev']);
+  gulp.watch('app/scripts.babel/**/*.js', ['lint', 'webpack', 'webpack-dev']);
   gulp.watch('bower.json', ['wiredep']);
 });
 
@@ -210,8 +208,7 @@ gulp.task('package', function () {
 
 gulp.task('build', (cb) => {
   runSequence(
-    // 'lint', 'webpack', 'webpack-dev', 'chromeManifest',
-    'webpack', 'webpack-dev', 'chromeManifest',
+    'lint', 'webpack', 'webpack-dev', 'chromeManifest',
     ['html', 'images', 'extras'],
     'size', cb);
 });

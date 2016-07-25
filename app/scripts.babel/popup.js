@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import ListTags from './containers/ListTags';
 
 ReactDOM.render(
-  (<div>hello world</div>),
+  (<ListTags />),
   document.getElementById('content')
 );
 
