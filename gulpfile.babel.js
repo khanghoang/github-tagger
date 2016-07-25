@@ -8,7 +8,7 @@ import webpack from 'webpack';
 import path from 'path';
 
 var query = {
-  presets: ['es2015', 'react']
+  presets: ['react', 'es2015']
 }
 
 const $ = gulpLoadPlugins();
@@ -26,37 +26,38 @@ gulp.task('extras', () => {
   }).pipe(gulp.dest('dist'));
 });
 
-function lint(files, options) {
-  return () => {
-    return gulp.src(files)
-      .pipe($.eslint(options))
-      .pipe($.eslint.format());
-  };
-}
-
-gulp.task('lint', lint('app/scripts.babel/**/*.js', {
-  extends: 'airbnb',
-  env: {
-    es6: true
-  },
-  parserOptions: {
-    sourceType: 'module'
-  },
-  plugins: [
-    'react'
-  ]
-}));
+// function lint(files, options) {
+//   return () => {
+//     return gulp.src(files)
+//       .pipe($.eslint(options))
+//       .pipe($.eslint.format());
+//   };
+// }
+//
+// gulp.task('lint', lint('app/scripts.babel#<{(||)}>#*.js', {
+//   extends: 'airbnb',
+//   env: {
+//     es6: true
+//   },
+//   parserOptions: {
+//     sourceType: 'module'
+//   },
+//   plugins: [
+//     'react'
+//   ]
+// }));
 
 gulp.task('webpack', cb => {
   webpack({
     context: __dirname,
     entry: {
-      popup: './app/scripts/popup.js'
+      popup: './app/scripts.babel/popup.js'
     },
     output: {
       path: path.join(__dirname, "dist/scripts"),
       filename: '[name].js',
     },
+    devtool: 'source-map',
     module: {
       loaders: [
         {
@@ -64,7 +65,7 @@ gulp.task('webpack', cb => {
           test: /\.js/,
           exclude: /node_modules/,
           loaders: ['babel-loader?'+JSON.stringify(query)],
-          include: path.join(__dirname, 'app')
+          include: __dirname
         },
         {
           test: /\.html$/,
@@ -134,12 +135,13 @@ gulp.task('webpack-dev', cb => {
   webpack({
     context: __dirname,
     entry: {
-      popup: './app/scripts/popup.js'
+      popup: './app/scripts.babel/popup.js'
     },
     output: {
       path: path.join(__dirname, "app/scripts"),
       filename: '[name].js',
     },
+    devtool: 'source-map',
     module: {
       loaders: [
         {
@@ -147,7 +149,7 @@ gulp.task('webpack-dev', cb => {
           test: /\.js/,
           exclude: /node_modules/,
           loaders: ['babel-loader?'+JSON.stringify(query)],
-          include: path.join(__dirname, 'app')
+          include: __dirname
         },
         {
           test: /\.html$/,
@@ -170,7 +172,8 @@ gulp.task('webpack-dev', cb => {
 
 gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
 
-gulp.task('watch', ['lint', 'webpack', 'webpack-dev', 'html'], () => {
+// gulp.task('watch', ['lint', 'webpack', 'webpack-dev', 'html'], () => {
+gulp.task('watch', ['webpack', 'webpack-dev', 'html'], () => {
   $.livereload.listen();
 
   gulp.watch([
@@ -181,7 +184,8 @@ gulp.task('watch', ['lint', 'webpack', 'webpack-dev', 'html'], () => {
     'app/_locales/**/*.json'
   ]).on('change', $.livereload.reload);
 
-  gulp.watch('app/scripts.babel/**/*.js', ['lint', 'webpack', 'webpack-dev']);
+  // gulp.watch('app/scripts.babel#<{(||)}>#*.js', ['lint', 'webpack', 'webpack-dev']);
+  gulp.watch('app/scripts.babel/**/*.js', ['webpack', 'webpack-dev']);
   gulp.watch('bower.json', ['wiredep']);
 });
 
@@ -206,7 +210,8 @@ gulp.task('package', function () {
 
 gulp.task('build', (cb) => {
   runSequence(
-    'lint', 'webpack', 'webpack-dev', 'chromeManifest',
+    // 'lint', 'webpack', 'webpack-dev', 'chromeManifest',
+    'webpack', 'webpack-dev', 'chromeManifest',
     ['html', 'images', 'extras'],
     'size', cb);
 });
