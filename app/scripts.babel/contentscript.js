@@ -1,14 +1,59 @@
-'use strict';
-
 document.addEventListener('DOMContentLoaded', function () {
   console.log('\'Allo \'Allo! Content script');
   const $button = $('.js-toggler-container.js-social-container.starring-container');
 
   function start() {
     addEventListener($button);
+    fetch('https://github-tagger.herokuapp.com/')
+      .then(res => {
+        return res.json();
+      })
+      .then(data => {
+        console.log(data);
+        return data;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  function saveRepo() {
+    const $headerContainer = $('.repohead-details-container').first();
+    const authorStr = $headerContainer.find('.author > a').text();
+    const projectStr = $headerContainer.find('strong > a').text();
+    const tags = $("#github-tagger-tags").val();
+    const repoName = `${authorStr}/${projectStr}`;
+    saveRepoWithTags(repoName, tags);
+  }
+
+  function saveRepoWithTags(repoName, tags) {
+
+    const buildForm = (params) => {
+      const searchParams = Object.keys(params).map((key) => {
+        return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+      }).join('&');
+      return searchParams;
+    }
+
+    return fetch('https://github-tagger.herokuapp.com/save', {
+      method: 'POST',
+      body: buildForm({
+        tags: tags,
+        name: repoName,
+      }),
+      credentials: 'include',
+      mode: 'no-cors',
+      headers: new Headers({
+        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+      })
+    })
+      .catch(err => {
+        console.log(err);
+      })
   }
 
   function addEventListener($button) {
+
     $button.find('.btn').on('click', function(e) {
 
       const isStarted = $button.hasClass('on');
@@ -39,9 +84,9 @@ document.addEventListener('DOMContentLoaded', function () {
           </p>
 
           <div class="input-group js-zeroclipboard-container">
-            <input type="text" class="form-control input-monospace input-sm js-zeroclipboard-target js-url-field" value="git@github.com:mmai/Category-Theory-for-the-Sciences.git" aria-label="Clone this repository at git@github.com:mmai/Category-Theory-for-the-Sciences.git">
+            <input type="text" id="github-tagger-tags" class="form-control input-monospace input-sm js-zeroclipboard-target js-url-field" value="javascript, es6" aria-label="Clone this repository at git@github.com:mmai/Category-Theory-for-the-Sciences.git">
             <div class="input-group-button">
-              <button aria-label="Save tags" class="js-zeroclipboard btn btn-sm zeroclipboard-button tooltipped tooltipped-s" data-copied-hint="Saving..." type="button">Save tags</button>
+              <button id="github-tagger-save-button" aria-label="Save tags" class="js-zeroclipboard btn btn-sm zeroclipboard-button tooltipped tooltipped-s" data-copied-hint="Saving..." type="button">Save tags</button>
             </div>
           </div>
         </div>
@@ -50,9 +95,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     $button.append($modal);
     $button.parent().addClass('dropdown');
+
+    $button.find("#github-tagger-save-button").on('click', () => {
+      console.log('on click save');
+      saveRepo();
+    });
+
   }
 
-  start()
+  start();
 });
 
 

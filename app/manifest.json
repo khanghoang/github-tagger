@@ -17,6 +17,7 @@
   "permissions": [
     "tabs",
     "https://github.com/*",
+    "https://github-tagger.herokuapp.com/*",
     "background",
     "debugger",
     "webRequest",
