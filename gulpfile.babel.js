@@ -4,6 +4,12 @@ import gulpLoadPlugins from 'gulp-load-plugins';
 import del from 'del';
 import runSequence from 'run-sequence';
 import {stream as wiredep} from 'wiredep';
+import webpack from 'webpack';
+import path from 'path';
+
+var query = {
+  presets: ['es2015', 'react']
+}
 
 const $ = gulpLoadPlugins();
 
@@ -34,6 +40,44 @@ gulp.task('lint', lint('app/scripts.babel/**/*.js', {
   }
 }));
 
+gulp.task('webpack', cb => {
+  webpack({
+    context: __dirname,
+    entry: {
+      popup: './app/scripts/popup.js'
+    },
+    output: {
+      path: path.join(__dirname, "dist/scripts"),
+      filename: '[name].js',
+    },
+    module: {
+      loaders: [
+        {
+          // babel
+          test: /\.js/,
+          exclude: /node_modules/,
+          loaders: ['babel-loader?'+JSON.stringify(query)],
+          include: path.join(__dirname, 'app')
+        },
+        {
+          test: /\.html$/,
+          loader: "file?name=[name].[ext]",
+        },
+        { test: /\.css$/, loader: "style-loader!css-loader" },
+        { test: /\.png$/, loader: "url-loader?limit=100000" },
+        { test: /\.(ttf|otf|eot|svg|woff(2)?)$/, loader: "url-loader?limit=100000"},
+        { test: /\.(jpg|gif)$/, loader: "file-loader" }
+      ]
+    },
+  }, (err, stats) => {
+    if (err) {
+      throw new gutil.PluginError('webpack', err);
+    }
+
+    cb();
+  });
+});
+
 gulp.task('images', () => {
   return gulp.src('app/images/**/*')
     .pipe($.if($.if.isFile, $.cache($.imagemin({
@@ -53,10 +97,10 @@ gulp.task('images', () => {
 gulp.task('html',  () => {
   return gulp.src('app/*.html')
     .pipe($.useref({searchPath: ['.tmp', 'app', '.']}))
-    .pipe($.sourcemaps.init())
-    .pipe($.if('*.js', $.uglify()))
-    .pipe($.if('*.css', $.cleanCss({compatibility: '*'})))
-    .pipe($.sourcemaps.write())
+    // .pipe($.sourcemaps.init())
+    // .pipe($.if('*.js', $.uglify()))
+    // .pipe($.if('*.css', $.cleanCss({compatibility: '*'})))
+    // .pipe($.sourcemaps.write())
     .pipe($.if('*.html', $.htmlmin({removeComments: true, collapseWhitespace: true})))
     .pipe(gulp.dest('dist'));
 });
@@ -89,7 +133,7 @@ gulp.task('babel', () => {
 
 gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
 
-gulp.task('watch', ['lint', 'babel', 'html'], () => {
+gulp.task('watch', ['lint', 'webpack', 'babel', 'html'], () => {
   $.livereload.listen();
 
   gulp.watch([
@@ -100,7 +144,7 @@ gulp.task('watch', ['lint', 'babel', 'html'], () => {
     'app/_locales/**/*.json'
   ]).on('change', $.livereload.reload);
 
-  gulp.watch('app/scripts.babel/**/*.js', ['lint', 'babel']);
+  gulp.watch('app/scripts.babel/**/*.js', ['lint', 'webpack', 'babel']);
   gulp.watch('bower.json', ['wiredep']);
 });
 
@@ -125,7 +169,7 @@ gulp.task('package', function () {
 
 gulp.task('build', (cb) => {
   runSequence(
-    'lint', 'babel', 'chromeManifest',
+    'lint', 'webpack', 'babel', 'chromeManifest',
     ['html', 'images', 'extras'],
     'size', cb);
 });
