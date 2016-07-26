@@ -1,10 +1,11 @@
+import '../../styles/github.css';
 import { Component } from 'react';
 import list from '../components/List';
 import {
   GET_REPOS_BY_TAG_URL as getRepoByTags,
 } from '../config';
 
-class ListTags extends Component {
+class ListRepo extends Component {
   constructor() {
     super();
     this.state = {
@@ -15,6 +16,9 @@ class ListTags extends Component {
     fetch(getRepoByTags('javascript'))
       .then(res => res.json()) // parse repo
       .then(res => res.data) // extract repos
+      .then(arrRepos => (
+        [...arrRepos, ...arrRepos, ...arrRepos, ...arrRepos, ...arrRepos, ...arrRepos, ...arrRepos]
+      ))
       .then(arrRepos => {
         this.setState({ repos: arrRepos });
         return arrRepos;
@@ -22,9 +26,8 @@ class ListTags extends Component {
       .catch(console.log);
   }
   render() {
-    const names = this.state.repos.map(r => r.name);
-    return list(names);
+    return list(this.state.repos);
   }
 }
 
-export default ListTags;
+export default ListRepo;

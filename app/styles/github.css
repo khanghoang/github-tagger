@@ -12,3 +12,59 @@
 .starring-container.open .dropdown-menu{
   display: block;
 }
+
+#content {
+  width: 400px;
+  max-height: 400px;
+}
+
+.btn {
+  position: relative;
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: #333;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /* background-color: #eee; */
+  /* background-image: -webkit-linear-gradient(#fcfcfc, #eee); */
+  background-image: linear-gradient(#eee, #eee);
+  border: 1px solid #d5d5d5;
+  border-radius: 3px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.btn-sm {
+  padding: 3px 10px;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.v-space-m {
+  margin-top: 15px;
+}
+
+.v-space-s {
+  margin-top: 5px;
+}
+
+.h-space-s {
+  margin-left: 5px;
+}
+
+.repo-item {
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
