@@ -100,15 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function start() {
     addEventListener($button);
-    fetch('https://github-tagger.herokuapp.com/')
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
-        return data;
-      })
-      .catch(err => {
-        console.log(err);
-      });
   }
 
   start();
