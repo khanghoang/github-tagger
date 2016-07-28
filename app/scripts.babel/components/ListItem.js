@@ -10,14 +10,6 @@ const tagEl = (tag) => (
 
 const ListItem = (repo) => {
   let tags = repo.tags.map(tagEl);
-  tags = [
-    ...tags,
-    ...tags,
-    ...tags,
-    ...tags,
-    ...tags,
-    ...tags,
-  ];
   return (
     <li key={repo._id} className="v-space-m">
       <GLink url={`https://github.com/${repo.name}`}>{repo.name}</GLink>

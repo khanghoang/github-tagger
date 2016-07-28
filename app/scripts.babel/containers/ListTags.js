@@ -28,9 +28,6 @@ class ListRepo extends Component {
     })
       .then(res => res.json()) // parse repo
       .then(res => res.data) // extract repos
-      .then(arrRepos => (
-        [...arrRepos, ...arrRepos, ...arrRepos, ...arrRepos, ...arrRepos, ...arrRepos, ...arrRepos]
-      ))
       .then(arrRepos => {
         this.setState({ repos: arrRepos });
         return arrRepos;
