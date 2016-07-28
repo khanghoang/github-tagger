@@ -52,7 +52,7 @@ gulp.task('webpack', cb => {
     context: __dirname,
     entry: {
       popup: './app/scripts.babel/popup.js',
-      content: './app/scripts.babel/contentscript.js'
+      contentscript: './app/scripts.babel/contentscript.js'
     },
     output: {
       path: path.join(__dirname, "dist/scripts"),
@@ -86,6 +86,54 @@ gulp.task('webpack', cb => {
     cb();
   });
 });
+
+gulp.task('webpack-production', cb => {
+  webpack({
+    context: __dirname,
+    entry: {
+      popup: './app/scripts.babel/popup.js',
+      contentscript: './app/scripts.babel/contentscript.js'
+    },
+    output: {
+      path: path.join(__dirname, "dist/scripts"),
+      filename: '[name].js',
+    },
+    devtool: 'cheap-module-source-map',
+    module: {
+      loaders: [
+        {
+          // babel
+          test: /\.js/,
+          exclude: /node_modules/,
+          loaders: ['babel-loader?'+JSON.stringify(query)],
+          include: __dirname
+        },
+        {
+          test: /\.html$/,
+          loader: "file?name=[name].[ext]",
+        },
+        { test: /\.css$/, loader: "style-loader!css-loader" },
+        { test: /\.png$/, loader: "url-loader?limit=100000" },
+        { test: /\.(ttf|otf|eot|svg|woff(2)?)$/, loader: "url-loader?limit=100000"},
+        { test: /\.(jpg|gif)$/, loader: "file-loader" }
+      ]
+    },
+    plugins: [
+      new webpack.DefinePlugin({
+        'process.env': {
+          'NODE_ENV': JSON.stringify('production')
+        }
+      })
+    ]
+  }, (err, stats) => {
+    if (err) {
+      throw new gutil.PluginError('webpack', err);
+    }
+
+    cb();
+  });
+});
+
 
 gulp.task('images', () => {
   return gulp.src('app/images/**/*')
@@ -137,7 +185,7 @@ gulp.task('webpack-dev', cb => {
     context: __dirname,
     entry: {
       popup: './app/scripts.babel/popup.js',
-      content: './app/scripts.babel/contentscript.js'
+      contentscript: './app/scripts.babel/contentscript.js'
     },
     output: {
       path: path.join(__dirname, "app/scripts"),
@@ -210,7 +258,7 @@ gulp.task('package', function () {
 
 gulp.task('build', (cb) => {
   runSequence(
-    'lint', 'webpack', 'webpack-dev', 'chromeManifest',
+    'lint', 'webpack-production', 'chromeManifest',
     ['html', 'images', 'extras'],
     'size', cb);
 });
