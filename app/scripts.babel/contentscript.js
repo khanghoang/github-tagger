@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const projectStr = $headerContainer.find('strong > a').text();
     const tags = $('#github-tagger-tags').val();
     const repoName = `${authorStr}/${projectStr}`;
-    saveRepoWithTags(repoName, tags);
+    return saveRepoWithTags(repoName, tags);
   }
 
   function addEventListener($btn) {
@@ -93,22 +93,16 @@ document.addEventListener('DOMContentLoaded', () => {
     $button.parent().addClass('dropdown');
 
     $button.find('#github-tagger-save-button').on('click', () => {
-      console.log('on click save');
-      saveRepo();
+      log('on click save');
+      saveRepo()
+        .then(() => {
+          $button.removeClass('open');
+        });
     });
   }
 
   function start() {
     addEventListener($button);
-    fetch('https://github-tagger.herokuapp.com/')
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
-        return data;
-      })
-      .catch(err => {
-        console.log(err);
-      });
   }
 
   start();
