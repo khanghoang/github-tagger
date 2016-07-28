@@ -41,14 +41,19 @@ document.addEventListener('DOMContentLoaded', function () {
       return searchParams;
     }
 
-    return fetch('https://github-tagger.herokuapp.com/save', {
+    let saveUrl = 'http://127.0.0.1:3333/save';
+    if (process.env.NODE_ENV === 'production') {
+      saveUrl = 'https://github-tagger.herokuapp.com/save';
+    }
+
+    return fetch(saveUrl, {
       method: 'POST',
       body: buildForm({
         tags: tags,
         name: repoName,
       }),
       credentials: 'include',
-      mode: 'no-cors',
+      mode: 'cors',
       headers: new Headers({
         'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
       })
