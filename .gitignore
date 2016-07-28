@@ -8,3 +8,7 @@ test/bower_components
 package
 app/scripts
 npm-debug.log*
+
+# chrome extension credential files
+app.crx
+key.pem
