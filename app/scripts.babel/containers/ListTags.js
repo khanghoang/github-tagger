@@ -1,8 +1,12 @@
+/* global chrome */
+
 import '../../styles/github.css';
 import React, { Component } from 'react';
 import list from '../components/List';
 import {
   GET_REPOS_BY_TAG_URL as getRepoByTags,
+  BASE_URL,
+  GITHUB_LOGIN_URL,
 } from '../config';
 
 class ListRepo extends Component {
@@ -15,9 +19,8 @@ class ListRepo extends Component {
 
     this.onClick = this.onClick.bind(this);
   }
-
   componentDidMount() {
-    chrome.cookies.getAll({ url: 'http://127.0.0.1' }, (arrCookies) => {
+    chrome.cookies.getAll({ url: BASE_URL }, (arrCookies) => {
       if (arrCookies.length > 0) {
         this.setState({ isLoggedIn: true });
       }
@@ -46,8 +49,7 @@ class ListRepo extends Component {
     // Set title and open popup with focus on it
     const title = 'Login with github';
     const strParam = `width=${intWidth},height=${intHeight}',resizable='${strResize}'`;
-    const url = 'http://localhost:3333/auth/github';
-    window.open(url, title, strParam).focus();
+    window.open(GITHUB_LOGIN_URL, title, strParam).focus();
   }
 
   render() {

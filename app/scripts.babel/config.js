@@ -8,3 +8,4 @@ export const GET_REPOS_BY_TAG_URL = (tags) => (
 );
 
 export const GET_TAGS_URL = path.join(BASE_URL, 'tags');
+export const GITHUB_LOGIN_URL = path.join(BASE_URL, 'auth/github');

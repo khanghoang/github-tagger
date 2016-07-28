@@ -1,3 +1,7 @@
+import {
+  SAVE_REPO_URL,
+} from './config';
+
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         console.info("ok");
@@ -47,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     return fetch(saveUrl, {
+    return fetch(SAVE_REPO_URL, {
       method: 'POST',
       body: buildForm({
         tags: tags,
