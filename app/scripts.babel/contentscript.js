@@ -3,81 +3,57 @@ import {
 } from './config';
 
 chrome.runtime.onMessage.addListener(
-    function(request, sender, sendResponse) {
-        console.info("ok");
-    }
+  () => {
+    console.info('ok');
+  }
 );
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
   console.log('\'Allo \'Allo! Content script');
   const $button = $('.js-toggler-container.js-social-container.starring-container');
 
-  function start() {
-    addEventListener($button);
-    fetch('https://github-tagger.herokuapp.com/')
-      .then(res => {
-        return res.json();
-      })
-      .then(data => {
-        console.log(data);
-        return data;
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
-
-  function saveRepo() {
-    const $headerContainer = $('.repohead-details-container').first();
-    const authorStr = $headerContainer.find('.author > a').text();
-    const projectStr = $headerContainer.find('strong > a').text();
-    const tags = $("#github-tagger-tags").val();
-    const repoName = `${authorStr}/${projectStr}`;
-    saveRepoWithTags(repoName, tags);
-  }
-
   function saveRepoWithTags(repoName, tags) {
-
     const buildForm = (params) => {
-      const searchParams = Object.keys(params).map((key) => {
-        return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
-      }).join('&');
+      const searchParams = Object.keys(params).map((key) => (
+        `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
+      )).join('&');
       return searchParams;
-    }
+    };
 
-    let saveUrl = 'http://127.0.0.1:3333/save';
-    if (process.env.NODE_ENV === 'production') {
-      saveUrl = 'https://github-tagger.herokuapp.com/save';
-    }
-
-    return fetch(saveUrl, {
     return fetch(SAVE_REPO_URL, {
       method: 'POST',
       body: buildForm({
-        tags: tags,
+        tags,
         name: repoName,
       }),
       credentials: 'include',
       mode: 'cors',
       headers: new Headers({
-        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
-      })
+        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+      }),
     })
       .catch(err => {
         console.log(err);
-      })
+      });
   }
 
-  function addEventListener($button) {
 
-    $button.find('.btn').on('click', function(e) {
+  function saveRepo() {
+    const $headerContainer = $('.repohead-details-container').first();
+    const authorStr = $headerContainer.find('.author > a').text();
+    const projectStr = $headerContainer.find('strong > a').text();
+    const tags = $('#github-tagger-tags').val();
+    const repoName = `${authorStr}/${projectStr}`;
+    saveRepoWithTags(repoName, tags);
+  }
 
+  function addEventListener($btn) {
+    $btn.find('.btn').on('click', () => {
       const isStarted = $button.hasClass('on');
-
       if (isStarted) {
         $button.removeClass('open');
         return;
-      };
+      }
 
       if ($button.hasClass('open')) {
         $button.removeClass('open');
@@ -85,6 +61,8 @@ document.addEventListener('DOMContentLoaded', function () {
         $button.addClass('open');
       }
     });
+
+    /* eslint-disable */
 
     const $modal = $(`
       <div class="dropdown-menu select-menu-modal-holder dropdown-menu-content js-menu-content" aria-hidden="false">
@@ -109,18 +87,29 @@ document.addEventListener('DOMContentLoaded', function () {
       </div>
       `);
 
+    /* eslint-enable */
+
     $button.append($modal);
     $button.parent().addClass('dropdown');
 
-    $button.find("#github-tagger-save-button").on('click', () => {
+    $button.find('#github-tagger-save-button').on('click', () => {
       console.log('on click save');
       saveRepo();
     });
+  }
 
+  function start() {
+    addEventListener($button);
+    fetch('https://github-tagger.herokuapp.com/')
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        return data;
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   start();
 });
-
-
-
