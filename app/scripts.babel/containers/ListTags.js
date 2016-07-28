@@ -10,12 +10,22 @@ class ListRepo extends Component {
     super();
     this.state = {
       repos: [],
+      isLoggedIn: false,
     };
 
     this.onClick = this.onClick.bind(this);
   }
+
   componentDidMount() {
-    fetch(getRepoByTags('javascript'))
+    chrome.cookies.getAll({ url: 'http://127.0.0.1' }, (arrCookies) => {
+      if (arrCookies.length > 0) {
+        this.setState({ isLoggedIn: true });
+      }
+    });
+
+    fetch(getRepoByTags(''), {
+      credentials: 'include',
+    })
       .then(res => res.json()) // parse repo
       .then(res => res.data) // extract repos
       .then(arrRepos => (
@@ -29,7 +39,6 @@ class ListRepo extends Component {
   }
 
   onClick(e) {
-
     // Prevent default anchor event
     e.preventDefault();
     // Set values for window
@@ -46,9 +55,10 @@ class ListRepo extends Component {
 
   render() {
     const listRepos = list(this.state.repos);
+    const login = !this.state.isLoggedIn && (<div onClick={this.onClick}>Login with github</div>);
     return (
       <div>
-        <div onClick={this.onClick}>Login with github</div>
+        {login}
         {listRepos}
       </div>
     );
