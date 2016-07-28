@@ -9,7 +9,10 @@ class GLink extends Component {
 
   onClick() {
     const { url } = this.props;
-    chrome.tabs.create({ url: url });
+    // chrome.tabs.create({ url: url });
+    chrome.tabs.query({active:true, currentWindow: true}, function(tabs){
+      chrome.tabs.sendMessage(tabs[0].id, "start");
+    });
   }
 
   render() {

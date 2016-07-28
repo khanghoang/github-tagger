@@ -1,3 +1,9 @@
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+        console.info("ok");
+    }
+);
+
 document.addEventListener('DOMContentLoaded', function () {
   console.log('\'Allo \'Allo! Content script');
   const $button = $('.js-toggler-container.js-social-container.starring-container');
