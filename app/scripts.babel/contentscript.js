@@ -93,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
     $button.parent().addClass('dropdown');
 
     $button.find('#github-tagger-save-button').on('click', () => {
-      log('on click save');
       saveRepo()
         .then(() => {
           $button.removeClass('open');
