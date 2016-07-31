@@ -258,7 +258,8 @@ gulp.task('package', function () {
 
 gulp.task('build', (cb) => {
   runSequence(
-    'lint', 'webpack-production', 'chromeManifest',
+    // 'lint', 'webpack-production', 'chromeManifest',
+    'lint', 'webpack-production',
     ['html', 'images', 'extras'],
     'size', cb);
 });
