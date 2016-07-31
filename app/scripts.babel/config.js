@@ -1,4 +1,7 @@
-const BASE_URL = process.env.PRODUCTION ? 'https://github-tagger.herokuapp.com' : 'http://127.0.0.1:3333';
+let BASE_URL = 'http://127.0.0.1:3333';
+if (process.env.NODE_ENV === 'production') {
+  BASE_URL = 'https://github-tagger.herokuapp.com';
+}
 
 export const GET_REPOS_URL = `${BASE_URL}/getRepo`;
 export const GET_REPOS_BY_TAG_URL = (tags) => (
