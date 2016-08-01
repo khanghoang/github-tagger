@@ -4,6 +4,11 @@ Chrome extension that allows you to add tags to the repo you star on Github
 ### Introduction
 
 ### Dev
+```
+gulp build --production --local
+```
+
+Determine whether we use local/heroku, dev/prod
 
 ### Release process:
 - Run `npm build`
