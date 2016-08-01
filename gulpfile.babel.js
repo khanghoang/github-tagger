@@ -8,7 +8,7 @@ import webpack from 'webpack';
 import path from 'path';
 import getWebpackConfig from './getWebpackConfig';
 
-const buildFlags = require('yargs').boolean('production').boolean('local').argv;
+let buildFlags = require('yargs').boolean('production').boolean('local').argv;
 
 var query = {
   presets: ['react', 'es2015']
@@ -151,5 +151,15 @@ gulp.task('build', (cb) => {
 });
 
 gulp.task('default', ['clean'], cb => {
-  runSequence('build', cb);
+
+  buildFlags = {
+    production: true,
+    local: false,
+  };
+
+  runSequence(
+    'lint', 'webpack', 'chromeManifest',
+    ['html', 'images', 'extras'],
+    'size', cb);
 });
+
