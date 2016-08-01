@@ -6,6 +6,9 @@ import runSequence from 'run-sequence';
 import {stream as wiredep} from 'wiredep';
 import webpack from 'webpack';
 import path from 'path';
+import getWebpackConfig from './getWebpackConfig';
+
+const buildFlags = require('yargs').boolean('production').boolean('local').argv;
 
 var query = {
   presets: ['react', 'es2015']
@@ -48,46 +51,13 @@ gulp.task('lint', lint('app/scripts.babel/**/*.js', {
 }));
 
 gulp.task('webpack', cb => {
-  webpack({
-    context: __dirname,
-    entry: {
-      popup: './app/scripts.babel/popup.js',
-      contentscript: './app/scripts.babel/contentscript.js',
-      background: './app/scripts.babel/background.js'
-    },
-    output: {
-      path: path.join(__dirname, "dist/scripts"),
-      filename: '[name].js',
-    },
-    devtool: 'source-map',
-    module: {
-      loaders: [
-        {
-          // babel
-          test: /\.js/,
-          exclude: /node_modules/,
-          loaders: ['babel-loader?'+JSON.stringify(query)],
-          include: __dirname
-        },
-        {
-          test: /\.html$/,
-          loader: "file?name=[name].[ext]",
-        },
-        { test: /\.css$/, loader: "style-loader!css-loader" },
-        { test: /\.png$/, loader: "url-loader?limit=100000" },
-        { test: /\.(ttf|otf|eot|svg|woff(2)?)$/, loader: "url-loader?limit=100000"},
-        { test: /\.(jpg|gif)$/, loader: "file-loader" }
-      ]
-    },
-    plugins: [
-      new webpack.DefinePlugin({
-        'process.env': {
-          'NODE_ENV': JSON.stringify('development'),
-          'LOCAL': JSON.stringify(true)
-        }
-      })
-    ]
-  }, (err, stats) => {
+  const { production = false, local = true } = buildFlags;
+
+  console.log(buildFlags);
+
+  webpack(
+    getWebpackConfig({production, local}),
+    (err, stats) => {
     if (err) {
       throw new gutil.PluginError('webpack', err);
     }
@@ -95,56 +65,6 @@ gulp.task('webpack', cb => {
     cb();
   });
 });
-
-gulp.task('webpack-production', cb => {
-  webpack({
-    context: __dirname,
-    entry: {
-      popup: './app/scripts.babel/popup.js',
-      contentscript: './app/scripts.babel/contentscript.js',
-      background: './app/scripts.babel/background.js'
-    },
-    output: {
-      path: path.join(__dirname, "dist/scripts"),
-      filename: '[name].js',
-    },
-    devtool: 'cheap-module-source-map',
-    module: {
-      loaders: [
-        {
-          // babel
-          test: /\.js/,
-          exclude: /node_modules/,
-          loaders: ['babel-loader?'+JSON.stringify(query)],
-          include: __dirname
-        },
-        {
-          test: /\.html$/,
-          loader: "file?name=[name].[ext]",
-        },
-        { test: /\.css$/, loader: "style-loader!css-loader" },
-        { test: /\.png$/, loader: "url-loader?limit=100000" },
-        { test: /\.(ttf|otf|eot|svg|woff(2)?)$/, loader: "url-loader?limit=100000"},
-        { test: /\.(jpg|gif)$/, loader: "file-loader" }
-      ]
-    },
-    plugins: [
-      new webpack.DefinePlugin({
-        'process.env': {
-          'NODE_ENV': JSON.stringify('production'),
-          'LOCAL': JSON.stringify(false)
-        }
-      })
-    ]
-  }, (err, stats) => {
-    if (err) {
-      throw new gutil.PluginError('webpack', err);
-    }
-
-    cb();
-  });
-});
-
 
 gulp.task('images', () => {
   return gulp.src('app/images/**/*')
@@ -191,50 +111,9 @@ gulp.task('chromeManifest', () => {
   .pipe(gulp.dest('dist'));
 });
 
-gulp.task('webpack-dev', cb => {
-  webpack({
-    context: __dirname,
-    entry: {
-      popup: './app/scripts.babel/popup.js',
-      contentscript: './app/scripts.babel/contentscript.js',
-      background: './app/scripts.babel/background.js'
-    },
-    output: {
-      path: path.join(__dirname, "app/scripts"),
-      filename: '[name].js',
-    },
-    devtool: 'source-map',
-    module: {
-      loaders: [
-        {
-          // babel
-          test: /\.js/,
-          exclude: /node_modules/,
-          loaders: ['babel-loader?'+JSON.stringify(query)],
-          include: __dirname
-        },
-        {
-          test: /\.html$/,
-          loader: "file?name=[name].[ext]",
-        },
-        { test: /\.css$/, loader: "style-loader!css-loader" },
-        { test: /\.png$/, loader: "url-loader?limit=100000" },
-        { test: /\.(ttf|otf|eot|svg|woff(2)?)$/, loader: "url-loader?limit=100000"},
-        { test: /\.(jpg|gif)$/, loader: "file-loader" }
-      ]
-    },
-  }, (err, stats) => {
-    if (err) {
-      throw new gutil.PluginError('webpack', err);
-    }
-
-    cb();
-  });
-});
-
 gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
 
-gulp.task('watch', ['lint', 'webpack', 'webpack-dev', 'html'], () => {
+gulp.task('watch', ['lint', 'webpack', 'html'], () => {
   $.livereload.listen();
 
   gulp.watch([
@@ -245,7 +124,7 @@ gulp.task('watch', ['lint', 'webpack', 'webpack-dev', 'html'], () => {
     'app/_locales/**/*.json'
   ]).on('change', $.livereload.reload);
 
-  gulp.watch('app/scripts.babel/**/*.js', ['lint', 'webpack', 'webpack-dev']);
+  gulp.watch('app/scripts.babel/**/*.js', ['lint', 'webpack']);
   gulp.watch('bower.json', ['wiredep']);
 });
 
@@ -271,7 +150,7 @@ gulp.task('package', function () {
 gulp.task('build', (cb) => {
   runSequence(
     // 'lint', 'webpack-production', 'chromeManifest',
-    'lint', 'webpack-production',
+    'lint', 'webpack',
     ['html', 'images', 'extras'],
     'size', cb);
 });
