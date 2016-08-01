@@ -79,6 +79,14 @@ gulp.task('webpack', cb => {
         { test: /\.(jpg|gif)$/, loader: "file-loader" }
       ]
     },
+    plugins: [
+      new webpack.DefinePlugin({
+        'process.env': {
+          'NODE_ENV': JSON.stringify('development'),
+          'LOCAL': JSON.stringify(true)
+        }
+      })
+    ]
   }, (err, stats) => {
     if (err) {
       throw new gutil.PluginError('webpack', err);
@@ -123,7 +131,8 @@ gulp.task('webpack-production', cb => {
     plugins: [
       new webpack.DefinePlugin({
         'process.env': {
-          'NODE_ENV': JSON.stringify('production')
+          'NODE_ENV': JSON.stringify('production'),
+          'LOCAL': JSON.stringify(false)
         }
       })
     ]
