@@ -52,7 +52,8 @@ gulp.task('webpack', cb => {
     context: __dirname,
     entry: {
       popup: './app/scripts.babel/popup.js',
-      contentscript: './app/scripts.babel/contentscript.js'
+      contentscript: './app/scripts.babel/contentscript.js',
+      background: './app/scripts.babel/background.js'
     },
     output: {
       path: path.join(__dirname, "dist/scripts"),
@@ -92,7 +93,8 @@ gulp.task('webpack-production', cb => {
     context: __dirname,
     entry: {
       popup: './app/scripts.babel/popup.js',
-      contentscript: './app/scripts.babel/contentscript.js'
+      contentscript: './app/scripts.babel/contentscript.js',
+      background: './app/scripts.babel/background.js'
     },
     output: {
       path: path.join(__dirname, "dist/scripts"),
@@ -185,7 +187,8 @@ gulp.task('webpack-dev', cb => {
     context: __dirname,
     entry: {
       popup: './app/scripts.babel/popup.js',
-      contentscript: './app/scripts.babel/contentscript.js'
+      contentscript: './app/scripts.babel/contentscript.js',
+      background: './app/scripts.babel/background.js'
     },
     output: {
       path: path.join(__dirname, "app/scripts"),
