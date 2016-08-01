@@ -1,5 +1,5 @@
 let BASE_URL = 'http://127.0.0.1:3333';
-if (process.env.NODE_ENV === 'production') {
+if (process.env.LOCAL) {
   BASE_URL = 'https://github-tagger.herokuapp.com';
 }
 
