@@ -52,16 +52,12 @@ gulp.task('lint', lint('app/scripts.babel/**/*.js', {
 
 gulp.task('webpack', cb => {
   const { production = false, local = true } = buildFlags;
-
-  console.log(buildFlags);
-
   webpack(
     getWebpackConfig({production, local}),
     (err, stats) => {
     if (err) {
       throw new gutil.PluginError('webpack', err);
     }
-
     cb();
   });
 });
@@ -149,7 +145,6 @@ gulp.task('package', function () {
 
 gulp.task('build', (cb) => {
   runSequence(
-    // 'lint', 'webpack-production', 'chromeManifest',
     'lint', 'webpack',
     ['html', 'images', 'extras'],
     'size', cb);

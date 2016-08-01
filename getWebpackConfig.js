@@ -7,9 +7,6 @@ const query = {
 
 export default function getWebpackConfig(config) {
   const { production = false, local = true } = config;
-
-  console.log(production, local);
-
   const devtool = production ? 'cheap-module-source-map' : 'source-map';
 
   return {
