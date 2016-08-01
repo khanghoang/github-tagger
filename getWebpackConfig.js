@@ -9,6 +9,24 @@ export default function getWebpackConfig(config) {
   const { production = false, local = true } = config;
   const devtool = production ? 'cheap-module-source-map' : 'source-map';
 
+  let plugins = [
+    new webpack.DefinePlugin({
+        'process.env': {
+          'NODE_ENV': JSON.stringify(production ? 'production' : 'development'), // eslint-disable-line
+          'LOCAL': JSON.stringify(local), // eslint-disable-line
+        },
+    }),
+  ];
+
+  if (production) {
+    plugins = [
+      ...plugins,
+      new webpack.optimize.UglifyJsPlugin(),
+      new webpack.optimize.OccurrenceOrderPlugin(),
+      new webpack.optimize.DedupePlugin(),
+    ];
+  }
+
   return {
     context: __dirname,
     entry: {
@@ -40,13 +58,6 @@ export default function getWebpackConfig(config) {
         { test: /\.(jpg|gif)$/, loader: 'file-loader' },
       ],
     },
-    plugins: [
-      new webpack.DefinePlugin({
-        'process.env': {
-          'NODE_ENV': JSON.stringify(production ? 'production' : 'development'), // eslint-disable-line
-          'LOCAL': JSON.stringify(local), // eslint-disable-line
-        },
-      }),
-    ],
+    plugins
   };
 }
