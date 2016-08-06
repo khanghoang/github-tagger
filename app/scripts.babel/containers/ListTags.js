@@ -32,13 +32,13 @@ class ListRepo extends Component {
     fetch(getRepoByTags(''), {
       credentials: 'include',
     })
-      .then(res => res.json()) // parse repo
-      .then(res => res.data) // extract repos
-      .then(arrRepos => {
-        this.setState({ repos: arrRepos });
-        return arrRepos;
-      })
-      .catch(console.log.bind(console));
+    .then(res => res.json()) // parse repo
+    .then(res => res.data) // extract repos
+    .then(arrRepos => {
+      this.setState({ repos: arrRepos });
+      return arrRepos;
+    })
+    .catch(console.log.bind(console));
   }
 
   onClick(e) {
@@ -63,6 +63,10 @@ class ListRepo extends Component {
   }
 
   render() {
+    const loadingText = this.state.repos.length ? null : (
+      <div className="v-space-m"><b>Hang on, we are fetching repos...</b></div>
+    );
+
     const listRepos = this.state.searchResults.length ?
       (<List repos={this.state.searchResults} />) :
       (<List repos={this.state.repos} />);
@@ -70,11 +74,13 @@ class ListRepo extends Component {
     const login = !this.state.isLoggedIn &&
       (<b style={{ textDecoration: 'pointer' }} onClick={this.onClick}>Login with github</b>);
 
-    const searchBar = <SearchBar repos={this.state.repos} onResults={this.onResults} />;
+    const searchBar = this.state.repos.length ?
+      (<SearchBar repos={this.state.repos} onResults={this.onResults} />) : null;
     return (
       <div>
       {login}
       {searchBar}
+      {loadingText}
       {listRepos}
       </div>
     );
