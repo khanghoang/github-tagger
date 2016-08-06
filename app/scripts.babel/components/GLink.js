@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { setPropTypes, withHandlers, compose } from 'recompose';
 
 const GLink = ({ onClick, children }) => (
-  <div onClick={onClick}>{children}</div>
+  <b style={{ textDecoration: 'underline', cursor: 'pointer' }} onClick={onClick}>{children}</b>
 );
 
 const enhance = compose(

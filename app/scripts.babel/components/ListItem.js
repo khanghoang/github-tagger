@@ -9,10 +9,13 @@ const Tag = ({ tag }) => (
 
 
 const ListItem = ({ repo }) => {
-  let tags = repo.tags.map(t => <Tag tag={t} />);
+  const tags = repo.tags.map(t => <Tag tag={t} />);
+  const [username, repoName] = repo.name.split('/');
+  const userLink = (<GLink url={`https://github.com/${username}`}>{username}</GLink>);
+  const repoLink = (<GLink url={`https://github.com/${username}/${repoName}`}>{repoName}</GLink>);
   return (
     <li key={repo._id} className="v-space-m">
-      <GLink url={`https://github.com/${repo.name}`}>{repo.name}</GLink>
+      {userLink} / {repoLink}
       <div className="v-space-s">
         {tags}
       </div>
