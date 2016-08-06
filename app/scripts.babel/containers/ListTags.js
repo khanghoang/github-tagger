@@ -2,7 +2,7 @@
 
 import '../../styles/github.css';
 import React, { Component } from 'react';
-import list from '../components/List';
+import List from '../components/List';
 import {
   GET_REPOS_BY_TAG_URL as getRepoByTags,
   BASE_URL,
@@ -53,7 +53,7 @@ class ListRepo extends Component {
   }
 
   render() {
-    const listRepos = list(this.state.repos);
+    const listRepos = <List repos={this.state.repos} />;
     const login = !this.state.isLoggedIn && (<div onClick={this.onClick}>Login with github</div>);
     return (
       <div>

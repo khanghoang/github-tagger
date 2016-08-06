@@ -1,8 +1,8 @@
 import React from 'react';
-import listItem from './ListItem';
+import ListItem from './ListItem';
 
-const List = (items) => {
-  const arr = items.map(i => listItem(i));
+const List = ({ repos }) => {
+  const arr = repos.map(repo => <ListItem repo={repo} />);
   return (
     <ul>
     {arr}
