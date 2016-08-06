@@ -66,7 +66,10 @@ class ListRepo extends Component {
     const listRepos = this.state.searchResults.length ?
       (<List repos={this.state.searchResults} />) :
       (<List repos={this.state.repos} />);
-    const login = !this.state.isLoggedIn && (<div onClick={this.onClick}>Login with github</div>);
+
+    const login = !this.state.isLoggedIn &&
+      (<b style={{ textDecoration: 'pointer' }} onClick={this.onClick}>Login with github</b>);
+
     const searchBar = <SearchBar repos={this.state.repos} onResults={this.onResults} />;
     return (
       <div>
