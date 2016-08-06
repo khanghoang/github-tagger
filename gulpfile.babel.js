@@ -144,10 +144,11 @@ gulp.task('build', (cb) => {
     'size', cb);
 });
 
-gulp.task('default', ['clean'], cb => {
+gulp.task('build-play-store', ['clean'], cb => {
   buildFlags = {
     production: true,
-    local: true,
+    local: false,
+    playstore: true,
   };
 
   runSequence(
