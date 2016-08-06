@@ -8,6 +8,7 @@ import {
   BASE_URL,
   GITHUB_LOGIN_URL,
 } from '../config';
+import SearchBar from '../components/searchBar';
 
 class ListRepo extends Component {
   constructor() {
@@ -15,9 +16,11 @@ class ListRepo extends Component {
     this.state = {
       repos: [],
       isLoggedIn: false,
+      searchResults: [],
     };
 
     this.onClick = this.onClick.bind(this);
+    this.onResults = this.onResults.bind(this);
   }
   componentDidMount() {
     chrome.cookies.getAll({ url: BASE_URL }, (arrCookies) => {
@@ -52,13 +55,24 @@ class ListRepo extends Component {
     window.open(GITHUB_LOGIN_URL, title, strParam).focus();
   }
 
+  onResults(results) {
+    console.log(results);
+    this.setState({
+      searchResults: results,
+    });
+  }
+
   render() {
-    const listRepos = <List repos={this.state.repos} />;
+    const listRepos = this.state.searchResults.length ?
+      (<List repos={this.state.searchResults} />) :
+      (<List repos={this.state.repos} />);
     const login = !this.state.isLoggedIn && (<div onClick={this.onClick}>Login with github</div>);
+    const searchBar = <SearchBar repos={this.state.repos} onResults={this.onResults} />;
     return (
       <div>
-        {login}
-        {listRepos}
+      {login}
+      {searchBar}
+      {listRepos}
       </div>
     );
   }
