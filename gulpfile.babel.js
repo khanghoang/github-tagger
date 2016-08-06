@@ -3,16 +3,14 @@ import gulp from 'gulp';
 import gulpLoadPlugins from 'gulp-load-plugins';
 import del from 'del';
 import runSequence from 'run-sequence';
-import {stream as wiredep} from 'wiredep';
+import { stream as wiredep } from 'wiredep';
 import webpack from 'webpack';
-import path from 'path';
 import getWebpackConfig from './getWebpackConfig';
 
-let buildFlags = require('yargs').boolean('production').boolean('local').argv;
-
-var query = {
-  presets: ['react', 'es2015']
-}
+let buildFlags = require('yargs')
+  .boolean('production')
+  .default('local', true)
+  .boolean('local').argv;
 
 const $ = gulpLoadPlugins();
 
@@ -25,41 +23,41 @@ gulp.task('extras', () => {
     '!app/*.html',
   ], {
     base: 'app',
-    dot: true
+    dot: true,
   }).pipe(gulp.dest('dist'));
 });
 
 function lint(files, options) {
-  return () => {
-    return gulp.src(files)
+  return () => (
+    gulp.src(files)
       .pipe($.eslint(options))
-      .pipe($.eslint.format());
-  };
+      .pipe($.eslint.format())
+  );
 }
 
 gulp.task('lint', lint('app/scripts.babel/**/*.js', {
   extends: 'airbnb',
   env: {
-    es6: true
+    es6: true,
   },
   parserOptions: {
-    sourceType: 'module'
+    sourceType: 'module',
   },
   plugins: [
-    'react'
-  ]
+    'react',
+  ],
 }));
 
 gulp.task('webpack', cb => {
   const { production = false, local = true } = buildFlags;
   webpack(
-    getWebpackConfig({production, local}),
-    (err, stats) => {
-    if (err) {
-      throw new gutil.PluginError('webpack', err);
-    }
-    cb();
-  });
+    getWebpackConfig({ production, local }),
+    (err) => {
+      if (err) {
+        throw new gutil.PluginError('webpack', err);
+      }
+      cb();
+    });
 });
 
 gulp.task('images', () => {
@@ -69,7 +67,7 @@ gulp.task('images', () => {
       interlaced: true,
       // don't remove IDs from SVGs, they are often used
       // as hooks for embedding and styling
-      svgoPlugins: [{cleanupIDs: false}]
+      svgoPlugins: [{ cleanupIDs: false }],
     }))
     .on('error', function (err) {
       console.log(err);
@@ -78,10 +76,10 @@ gulp.task('images', () => {
     .pipe(gulp.dest('dist/images'));
 });
 
-gulp.task('html',  () => {
+gulp.task('html', () => {
   return gulp.src('app/*.html')
-    .pipe($.useref({searchPath: ['.tmp', 'app', '.']}))
-    .pipe($.if('*.html', $.htmlmin({removeComments: true, collapseWhitespace: true})))
+    .pipe($.useref({ searchPath: ['.tmp', 'app', '.'] }))
+    .pipe($.if('*.html', $.htmlmin({ removeComments: true, collapseWhitespace: true })))
     .pipe(gulp.dest('dist'));
 });
 
@@ -92,11 +90,11 @@ gulp.task('chromeManifest', () => {
       background: {
         target: 'scripts/background.js',
         exclude: [
-          'scripts/chromereload.js'
-        ]
-      }
-  }))
-  .pipe($.if('*.css', $.cleanCss({compatibility: '*'})))
+          'scripts/chromereload.js',
+        ],
+      },
+    }))
+  .pipe($.if('*.css', $.cleanCss({ compatibility: '*' })))
   .pipe(gulp.dest('dist'));
 });
 
@@ -110,7 +108,7 @@ gulp.task('watch', ['lint', 'webpack', 'html'], () => {
     'app/scripts/**/*.js',
     'app/images/**/*',
     'app/styles/**/*',
-    'app/_locales/**/*.json'
+    'app/_locales/**/*.json',
   ]).on('change', $.livereload.reload);
 
   gulp.watch('app/scripts.babel/**/*.js', ['lint', 'webpack']);
@@ -118,19 +116,19 @@ gulp.task('watch', ['lint', 'webpack', 'html'], () => {
 });
 
 gulp.task('size', () => {
-  return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true}));
+  return gulp.src('dist/**/*').pipe($.size({ title: 'build', gzip: true }));
 });
 
 gulp.task('wiredep', () => {
   gulp.src('app/*.html')
     .pipe(wiredep({
-      ignorePath: /^(\.\.\/)*\.\./
+      ignorePath: /^(\.\.\/)*\.\./,
     }))
     .pipe(gulp.dest('app'));
 });
 
 gulp.task('package', function () {
-  var manifest = require('./dist/manifest.json');
+  const manifest = require('./dist/manifest.json');
   return gulp.src('dist/**')
       .pipe($.zip('github tagger-' + manifest.version + '.zip'))
       .pipe(gulp.dest('package'));
@@ -144,7 +142,6 @@ gulp.task('build', (cb) => {
 });
 
 gulp.task('default', ['clean'], cb => {
-
   buildFlags = {
     production: true,
     local: false,
