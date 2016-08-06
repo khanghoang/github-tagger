@@ -1,8 +1,8 @@
-import React from 'react';
-import { withHandlers, compose } from 'recompose';
+import React, { PropTypes } from 'react';
+import { setPropTypes, withHandlers, compose } from 'recompose';
 
-const GLink = () => (
-  <div onClick={this.onClick}>{this.props.children}</div>
+const GLink = ({ onClick, children }) => (
+  <div onClick={onClick}>{children}</div>
 );
 
 const enhance = compose(
@@ -10,6 +10,11 @@ const enhance = compose(
     onClick: ({ url }) => () => {
       chrome.tabs.create({ url });
     },
+  }),
+
+  setPropTypes({
+    onClick: PropTypes.string,
+    children: PropTypes.node,
   })
 );
 
