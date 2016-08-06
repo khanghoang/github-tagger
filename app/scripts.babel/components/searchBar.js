@@ -1,15 +1,33 @@
 import React, { PropTypes } from 'react';
-import { compose, withHandlers, withState } from 'recompose';
+import { setPropTypes, compose, withProps, withHandlers } from 'recompose';
+import fuzzy from 'fuzzy';
 
-const searchBar = ({ onChange }) => {
-  return <input style={{ width: '200px' }} type="text"></input>;
-};
+const searchBar = ({ onChange }) => (
+  <input onChange={onChange} style={{ width: '300px' }} type="text"></input>
+);
 
 const enhance = compose(
-  withHandlers({
-    onChange: ({ repos }) => () => {
-      return repos.filter((t, idx) => idx % 2);
+  withProps(() => ({
+    searchOptions: {
+      pre: '<',
+      post: '>',
+      extract: (repo) => {
+        const tagsStr = repo.tags.reduce((acc, t) => (
+          `${acc} ${t.name}`
+        ), '');
+        return `${repo.name} ${tagsStr}`;
+      },
     },
+  })),
+  withHandlers({
+    onChange: ({ repos, onResults, searchOptions }) => e => {
+      const results = fuzzy.filter(e.target.value, repos, searchOptions);
+      onResults(results.map(r => r.original));
+    },
+  }),
+
+  setPropTypes({
+    onChange: PropTypes.func,
   })
 );
 

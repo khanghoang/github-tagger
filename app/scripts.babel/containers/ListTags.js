@@ -56,7 +56,8 @@ class ListRepo extends Component {
   }
 
   onResults(results) {
-    this.setStates({
+    console.log(results);
+    this.setState({
       searchResults: results,
     });
   }
