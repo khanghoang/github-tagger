@@ -11,10 +11,11 @@ export default function getWebpackConfig(config) {
 
   let plugins = [
     new webpack.DefinePlugin({
-        'process.env': {
+      'process.env': {
           'NODE_ENV': JSON.stringify(production ? 'production' : 'development'), // eslint-disable-line
-          'LOCAL': JSON.stringify(local), // eslint-disable-line
-        },
+        'LOCAL': JSON.stringify(local), // eslint-disable-line,
+          'PLAYSTORE': JSON.stringify(local), // eslint-disable-line
+      },
     }),
   ];
 
@@ -58,6 +59,6 @@ export default function getWebpackConfig(config) {
         { test: /\.(jpg|gif)$/, loader: 'file-loader' },
       ],
     },
-    plugins
+    plugins,
   };
 }

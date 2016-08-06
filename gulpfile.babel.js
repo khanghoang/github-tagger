@@ -9,8 +9,11 @@ import getWebpackConfig from './getWebpackConfig';
 
 let buildFlags = require('yargs')
   .boolean('production')
-  .default('local', true)
-  .boolean('local').argv;
+  .boolean('local')
+  .default('local', false)
+  .boolean('playstore')
+  .default('playstore', false)
+  .argv;
 
 const $ = gulpLoadPlugins();
 
@@ -49,9 +52,9 @@ gulp.task('lint', lint('app/scripts.babel/**/*.js', {
 }));
 
 gulp.task('webpack', cb => {
-  const { production = false, local = true } = buildFlags;
+  const { production = false, local = true, playstore = false } = buildFlags;
   webpack(
-    getWebpackConfig({ production, local }),
+    getWebpackConfig({ production, local, playstore }),
     (err) => {
       if (err) {
         throw new gutil.PluginError('webpack', err);
@@ -144,7 +147,7 @@ gulp.task('build', (cb) => {
 gulp.task('default', ['clean'], cb => {
   buildFlags = {
     production: true,
-    local: false,
+    local: true,
   };
 
   runSequence(
