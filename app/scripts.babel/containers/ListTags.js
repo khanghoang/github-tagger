@@ -35,7 +35,7 @@ class ListRepo extends Component {
         this.setState({ repos: arrRepos });
         return arrRepos;
       })
-      .catch(console.log);
+      .catch(console.log.bind(console));
   }
 
   onClick(e) {
