@@ -1,25 +1,21 @@
-import React, { Component } from 'react';
+import React, { PropTypes } from 'react';
+import { setPropTypes, withHandlers, compose } from 'recompose';
 
-class GLink extends Component {
+const GLink = ({ onClick, children }) => (
+  <b style={{ textDecoration: 'underline', cursor: 'pointer' }} onClick={onClick}>{children}</b>
+);
 
-  constructor() {
-    super();
-    this.onClick = this.onClick.bind(this);
-  }
+const enhance = compose(
+  withHandlers({
+    onClick: ({ url }) => () => {
+      chrome.tabs.create({ url });
+    },
+  }),
 
-  onClick() {
-    const { url } = this.props;
-    // chrome.tabs.create({ url: url });
-    chrome.tabs.query({active:true, currentWindow: true}, function(tabs){
-      chrome.tabs.sendMessage(tabs[0].id, "start");
-    });
-  }
+  setPropTypes({
+    onClick: PropTypes.string,
+    children: PropTypes.node,
+  })
+);
 
-  render() {
-    return (
-      <div onClick={this.onClick}>{this.props.children}</div>
-    );
-  }
-}
-
-export default GLink;
+export default enhance(GLink);
