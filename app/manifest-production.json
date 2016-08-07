@@ -10,7 +10,6 @@
   "default_locale": "en",
   "background": {
     "scripts": [
-      "scripts/chromereload.js",
       "scripts/background.js"
     ]
   },
@@ -21,10 +20,7 @@
     "*://github-tagger.herokuapp.com/*",
     "background",
     "cookies",
-    "debugger",
-    "webRequest",
-    "*://*.google.com/",
-    "*://127.0.0.1/"
+    "webRequest"
   ],
   "options_ui": {
     "page": "options.html",
@@ -33,8 +29,7 @@
   "content_scripts": [
     {
       "matches": [
-        "https://github.com/*",
-        "http://127.0.0.1:3333/*"
+        "https://github.com/*"
       ],
       "js": [
         "scripts/contentscript.js",

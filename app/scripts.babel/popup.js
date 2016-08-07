@@ -16,5 +16,3 @@ ReactDOM.render(
   (<ListTags />),
   document.getElementById('content')
 );
-
-console.log('\'Allo \'Allo! Popup');

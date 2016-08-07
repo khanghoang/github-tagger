@@ -20,7 +20,9 @@ const $ = gulpLoadPlugins();
 gulp.task('extras', () => {
   return gulp.src([
     'app/*.*',
+    'app/scripts/*.js',
     'app/_locales/**',
+    '!app/scripts/chromereload.js',
     '!app/scripts.babel',
     '!app/*.json',
     '!app/*.html',
@@ -87,7 +89,8 @@ gulp.task('html', () => {
 });
 
 gulp.task('chromeManifest', () => {
-  return gulp.src('app/manifest.json')
+  return gulp.src('app/manifest-production.json')
+    .pipe($.rename('manifest.json'))
     .pipe($.chromeManifest({
       buildnumber: false,
       background: {
@@ -130,6 +133,17 @@ gulp.task('wiredep', () => {
     .pipe(gulp.dest('app'));
 });
 
+gulp.task('manifest-production', function () {
+  return gulp.src([
+    'app/manifest-production.json',
+  ], {
+    base: 'app',
+    dot: true,
+  })
+  .pipe($.rename('manifest.json'))
+  .pipe(gulp.dest('dist'));
+});
+
 gulp.task('package', function () {
   const manifest = require('./dist/manifest.json');
   return gulp.src('dist/**')
@@ -153,7 +167,8 @@ gulp.task('build-play-store', ['clean'], cb => {
 
   runSequence(
     'lint', 'webpack', 'chromeManifest',
-    ['html', 'images', 'extras', 'package'],
+    ['html', 'images', 'extras'],
+    'package',
     'size', cb);
 });
 
