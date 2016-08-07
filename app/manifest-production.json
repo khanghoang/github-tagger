@@ -1,8 +1,8 @@
 {
-  "name": "__MSG_appName__",
+  "name": "Github Tagger",
   "version": "0.0.2",
   "manifest_version": 2,
-  "description": "__MSG_appDescription__",
+  "description": "Chrome extension that helps you tag repos and find them later easily",
   "icons": {
     "16": "images/icon-16.png",
     "128": "images/icon-128.png"

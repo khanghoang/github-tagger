@@ -130,6 +130,17 @@ gulp.task('wiredep', () => {
     .pipe(gulp.dest('app'));
 });
 
+gulp.task('manifest-production', function () {
+  return gulp.src([
+    'app/manifest-production.json',
+  ], {
+    base: 'app',
+    dot: true,
+  })
+  .pipe($.rename('manifest.json'))
+  .pipe(gulp.dest('dist'));
+});
+
 gulp.task('package', function () {
   const manifest = require('./dist/manifest.json');
   return gulp.src('dist/**')
@@ -153,7 +164,8 @@ gulp.task('build-play-store', ['clean'], cb => {
 
   runSequence(
     'lint', 'webpack', 'chromeManifest',
-    ['html', 'images', 'extras', 'package'],
+    ['html', 'images', 'extras'],
+    'manifest-production', 'package',
     'size', cb);
 });
 
