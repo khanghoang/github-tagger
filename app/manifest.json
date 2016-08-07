@@ -1,6 +1,6 @@
 {
   "name": "Github Tagger",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "manifest_version": 2,
   "description": "Chrome extension that helps you tag repos and find them later easily",
   "icons": {
