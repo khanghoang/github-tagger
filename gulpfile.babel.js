@@ -20,7 +20,9 @@ const $ = gulpLoadPlugins();
 gulp.task('extras', () => {
   return gulp.src([
     'app/*.*',
+    'app/scripts/*.js',
     'app/_locales/**',
+    '!app/scripts/chromereload.js',
     '!app/scripts.babel',
     '!app/*.json',
     '!app/*.html',
@@ -87,7 +89,8 @@ gulp.task('html', () => {
 });
 
 gulp.task('chromeManifest', () => {
-  return gulp.src('app/manifest.json')
+  return gulp.src('app/manifest-production.json')
+    .pipe($.rename('manifest.json'))
     .pipe($.chromeManifest({
       buildnumber: false,
       background: {
@@ -165,7 +168,7 @@ gulp.task('build-play-store', ['clean'], cb => {
   runSequence(
     'lint', 'webpack', 'chromeManifest',
     ['html', 'images', 'extras'],
-    'manifest-production', 'package',
+    'package',
     'size', cb);
 });
 
