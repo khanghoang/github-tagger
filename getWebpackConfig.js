@@ -28,13 +28,19 @@ export default function getWebpackConfig(config) {
     ];
   }
 
+  const entry = {
+    popup: './app/scripts.babel/popup.js',
+    contentscript: './app/scripts.babel/contentscript.js',
+    background: './app/scripts.babel/background.js',
+  }
+
+  if (!production) {
+    entry.chromereload = './app/scripts.babel/chromereload.js';
+  }
+
   return {
     context: __dirname,
-    entry: {
-      popup: './app/scripts.babel/popup.js',
-      contentscript: './app/scripts.babel/contentscript.js',
-      background: './app/scripts.babel/background.js',
-    },
+    entry,
     output: {
       path: './app/scripts',
       filename: '[name].js',
