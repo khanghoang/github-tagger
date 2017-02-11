@@ -81,6 +81,7 @@ class ListRepo extends Component {
       {login}
       {searchBar}
       {loadingText}
+      <p>ababc</p>
       {listRepos}
       </div>
     );
